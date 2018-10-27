@@ -500,7 +500,7 @@
         ]
     );
     // Grab the contract at specified deployed address with the interface defined by the ABI
-    var starNotary = StarNotary.at('0x33cb163F2fA0e433a2638053ce5e60DE09deED76');
+    var starNotary = StarNotary.at('0xF22a6206725711F62601e9d78EaaDe25b2E4c933');
 
     function starInfoButtonClicked() {
         const starTokenId = document.getElementById('star-token-id').value;
@@ -538,14 +538,15 @@
                 return
             }
             var account = accounts[0];
-
-            starNotary.createStar.sendTransaction(name, story, ra, dec, mag, cent, tokenid, {from: account}, function (error, result) {
+            starNotary.createStar.sendTransaction(name, story, ra, dec, mag, cent, tokenid, {
+                from: account,
+                gas: 3000000
+            }, function (error, result) {
                 if (!error) {
-                    document.getElementById('error-message').innerText = result;
                     alert('please remember your starId:' + tokenid);
                     console.log(result);
                 } else {
-                    console.log('watching for star claimed event is failing');
+                    document.getElementById('error-message').innerText = error;
                 }
             });
 

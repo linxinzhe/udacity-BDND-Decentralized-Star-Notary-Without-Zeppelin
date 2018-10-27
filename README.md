@@ -1,8 +1,8 @@
 # udacity-BDND-Decentralized-Star-Notary-With-Zeppelin
 ## Deploy on Rinkeby
-- Contract address: 0x33cb163F2fA0e433a2638053ce5e60DE09deED76
+- Contract address: 0xF22a6206725711F62601e9d78EaaDe25b2E4c933
 - New Star
-    - Transaction ID: 0xcdf70465f4e67c68eb541ba25db947b13e6695ee4d8216d92557002a9c6f717b
+    - Transaction ID: 0xa48b00760e763c2a6f55c2cf42c85b620cef75b53d7addfc5c65acd339547eb7
     - Star Info:
         - name: Star
         - story: Superstar
