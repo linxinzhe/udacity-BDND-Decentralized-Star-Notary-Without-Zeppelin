@@ -1,4 +1,4 @@
-const ERC721Token = artifacts.require('ERC721Token')
+const ERC721Token = artifacts.require('ERC721Token');
 
 contract('ERC721Token', accounts => {
     var defaultAccount = accounts[0];
@@ -10,7 +10,7 @@ contract('ERC721Token', accounts => {
         this.contract = await ERC721Token.new({from: defaultAccount})
     });
 
-    describe('can create a token', () => {
+    describe('Test mint(): can create a token', () => {
         let tokenId = 1;
         let tx;
 
@@ -23,7 +23,7 @@ contract('ERC721Token', accounts => {
         });
 
         it('balanceOf user1 is incremented by 1', async function () {
-            let balance = await this.contract.balanceOf(user1)
+            let balance = await this.contract.balanceOf(user1);
 
             assert.equal(balance.toNumber(), 1)
         });
@@ -62,22 +62,22 @@ contract('ERC721Token', accounts => {
 
     });
 
-    describe('can grant approval to transfer', () => {
+    describe('Test approve(): an grant approval to transfer', () => {
         let tokenId = 1;
         let tx;
 
         beforeEach(async function () {
-            await this.contract.mint(tokenId, {from: user1})
+            await this.contract.mint(tokenId, {from: user1});
             tx = await this.contract.approve(user2, tokenId, {from: user1})
         });
 
 
-        it('set user2 as an approved address', async function () {
+        it('Test getApproved(): set user2 as an approved address', async function () {
             assert.equal(await this.contract.getApproved(tokenId), user2)
         });
 
 
-        it('user2 can now transfer', async function () {
+        it('Test transferFrom(): user2 can now transfer', async function () {
             await this.contract.transferFrom(user1, user2, tokenId, {from: user2})
 
             assert.equal(await this.contract.ownerOf(tokenId), user2)
@@ -90,7 +90,7 @@ contract('ERC721Token', accounts => {
 
     });
 
-    describe('can set an operator', () => {
+    describe('Test SetApprovalForAll(): can set an operator', () => {
         let tokenId = 1;
         let tx;
 
@@ -100,7 +100,7 @@ contract('ERC721Token', accounts => {
             tx = await this.contract.setApprovalForAll(operator, true, {from: user1});
         });
 
-        it('can set an operator', async function () {
+        it('Test isApprovedForAll(): can set an operator', async function () {
             assert.equal(await this.contract.isApprovedForAll(user1, operator), true);
         });
     });
