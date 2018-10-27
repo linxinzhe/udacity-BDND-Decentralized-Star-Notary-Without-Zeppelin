@@ -27,7 +27,7 @@ module.exports = {
         },
         rinkeby: {
             provider: function () {
-                return new HDWalletProvider(mnemonic, 'https://rinkeby.infura.io/v3/ee53140e0360498fbb61de3ed533e4e5')
+                return new HDWalletProvider(mnemonic, 'https://rinkeby.infura.io/v3/47cdb9d8dc594a9b98173e7596c2cf91')
             },
             network_id: 4,
             gas: 4500000,
