@@ -33,13 +33,13 @@ contract StarNotary is ERC721Token {
         ERC721Token.mint(_tokenId);
     }
 
-    function putStarUpForSale(uint256 _tokenId, uint256 _price) public { 
+    function putStarUpForSale(uint256 _tokenId, uint256 _price) public {
         require(this.ownerOf(_tokenId) == msg.sender);
 
         starsForSale[_tokenId] = _price;
     }
 
-    function buyStar(uint256 _tokenId) public payable { 
+    function buyStar(uint256 _tokenId) public payable {
         require(starsForSale[_tokenId] > 0);
 
         uint256 starCost = starsForSale[_tokenId];
@@ -51,7 +51,7 @@ contract StarNotary is ERC721Token {
 
         transferFromHelper(starOwner, msg.sender, _tokenId);
 
-        if(msg.value > starCost) { 
+        if (msg.value > starCost) {
             msg.sender.transfer(msg.value - starCost);
         }
 
@@ -71,11 +71,12 @@ contract StarNotary is ERC721Token {
         return coordinatorTaken[uint256(keccak256(coordinator.ra, coordinator.dec, coordinator.mag, coordinator.cent))];
     }
 
-    function starsForSale(uint256 _tokenId) public view returns(uint256){
+    function starsForSale(uint256 _tokenId) public view returns (uint256){
         return starsForSale[_tokenId];
     }
 
     function tokenIdToStarInfo(uint256 _tokenId) public view returns (string, string, string, string, string){
-        return (tokenIdToStarInfo[_tokenId].name, tokenIdToStarInfo[_tokenId].story, tokenIdToStarInfo[_tokenId].coordinator.ra, tokenIdToStarInfo[_tokenId].coordinator.dec, tokenIdToStarInfo[_tokenId].coordinator.mag);
+        Star memory star = tokenIdToStarInfo[_tokenId];
+        return (star.name, star.story, star.coordinator.ra, star.coordinator.dec, star.coordinator.mag);
     }
 }

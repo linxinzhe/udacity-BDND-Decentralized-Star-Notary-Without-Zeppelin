@@ -2,30 +2,35 @@ const StarNotary = artifacts.require('StarNotary');
 
 contract('StarNotary', accounts => {
 
+    const user1 = accounts[1];
+    const user2 = accounts[2];
+
+    const starName = "Star";
+    const starStory = "Superstar";
+    const starRa = "ra111";
+    const starDec = "dec222";
+    const starMag = "mag333";
+    const starCent = "cent444";
+    const starId = "0xf3f9ffc7a3388c455d8b27b6d44552edad3a6e12637a87fa78df61fe29a831aa";
+
     beforeEach(async function () {
         this.contract = await StarNotary.new({from: accounts[0]});
     });
 
     describe('can create a star', () => {
         it('Test createStar() and tokenIdToStarInfo(): can create a star and get its name', async function () {
-            const tokenId = 1001;
-            await this.contract.createStar("Star power 103!", "I love my wonderful star", "ra_032.155", "dec_121.874", "mag_245.978", "", tokenId, {from: accounts[0]});
+            await this.contract.createStar(starName, starStory, starRa, starDec, starMag, starCent, starId, {from: user1});
 
-            const starInfo = await this.contract.tokenIdToStarInfo(tokenId);
-            assert.equal(starInfo[0], 'Star power 103!');
+            const starInfo = await this.contract.tokenIdToStarInfo(starId);
+            assert.equal(starInfo[0], starName);
         });
     });
 
     describe('buying and selling stars', () => {
-        let user1 = accounts[1];
-        let user2 = accounts[2];
-        let randomMaliciousUser = accounts[3];
-
-        let starId = 1001;
         let starPrice = web3.toWei(.01, "ether");
 
         beforeEach(async function () {
-            await this.contract.createStar("Star power 103!", "I love my wonderful star", "ra_032.155", "dec_121.874", "mag_245.978", "", starId, {from: user1});
+            await this.contract.createStar(starName, starStory, starRa, starDec, starMag, starCent, starId, {from: user1});
         });
 
         it('Test ownerOf(): user1 should owe a star', async function () {
@@ -62,11 +67,8 @@ contract('StarNotary', accounts => {
     });
 
     describe('user can check if star exist', () => {
-        let user1 = accounts[1];
-        let starId = 1001;
-
         beforeEach(async function () {
-            await this.contract.createStar("Star power 103!", "I love my wonderful star", "ra_032.155", "dec_121.874", "mag_245.978", "", starId, {from: user1});
+            await this.contract.createStar(starName, starStory, starRa, starDec, starMag, starCent, starId, {from: user1});
         });
 
         it('Test checkIfStarExist(): user can check if star exist', async function () {

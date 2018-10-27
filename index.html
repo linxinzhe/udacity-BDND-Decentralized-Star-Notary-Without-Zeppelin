@@ -12,22 +12,50 @@
 <body>
 <div class="container">
     <h1>Star Notary</h1>
-
+    <h2>Claim a new star</h2>
     <div class="row">
-        <label class="bold">Star Name:</label>
-        <label id="star-name"></label>
+        <label class="bold">Error Message:</label>
+        <label id="error-message"></label>
     </div>
-
     <div class="row">
-        <label class="bold">Star Owner:</label>
-        <label id="star-owner"></label>
+        <label for="star-name" class="bold">Star Name:</label>
+        <input id="star-name" value=""/>
     </div>
-
+    <div class="row">
+        <label for="star-story" class="bold">Star Story:</label>
+        <input id="star-story" value=""/>
+    </div>
+    <div class="row">
+        <label for="star-ra" class="bold">Star Ra:</label>
+        <input id="star-ra" value=""/>
+    </div>
+    <div class="row">
+        <label for="star-dec" class="bold">Star Dec:</label>
+        <input id="star-dec" value=""/>
+    </div>
+    <div class="row">
+        <label for="star-mag" class="bold">Star Mag:</label>
+        <input id="star-mag" value=""/>
+    </div>
+    <div class="row">
+        <label for="star-cent" class="bold">Star Cent:</label>
+        <input id="star-cent" value=""/>
+    </div>
     <button id="claim-button" onclick="claimButtonClicked()">Claim Star</button>
+
+    <h2>Lookup a star</h2>
+    <div class="row">
+        <label for="star-token-id" class="bold">Star Token ID:</label>
+        <input id="star-token-id" value=""/>
+    </div>
+    <button id="star-info-button" onclick="starInfoButtonClicked()">Get Star Info</button>
+    <div class="row">
+        <label for="star-info" class="bold">Star Info:</label>
+        <label id="star-info"></label>
+    </div>
 </div>
 
 <script>
-
     if (typeof web3 !== 'undefined') {
         web3 = new Web3(web3.currentProvider) // what Metamask injected
     } else {
@@ -472,46 +500,52 @@
         ]
     );
     // Grab the contract at specified deployed address with the interface defined by the ABI
-    var starNotary = StarNotary.at('0x8040086095e9bc41535094bf03eae1f6178b5260');
+    var starNotary = StarNotary.at('0x33cb163F2fA0e433a2638053ce5e60DE09deED76');
 
-    // Get and display star name
-    starNotary.starName(function (error, result) {
-        if (!error) {
-            document.getElementById('star-name').innerText = result
-        } else {
-            console.log(error);
+    function starInfoButtonClicked() {
+        const starTokenId = document.getElementById('star-token-id').value;
+        if (!starTokenId) {
+            document.getElementById('error-message').innerText = "empty token ID!";
+            return;
         }
-    });
 
-    // Get and display star owner
-    starNotary.starOwner(function (error, result) {
-        if (!error) {
-            document.getElementById('star-owner').innerText = result
-        } else {
-            console.log(error);
-        }
-    });
+        starNotary.tokenIdToStarInfo(starTokenId, function (error, result) {
+            if (!error) {
+                document.getElementById('error-message').innerText = result;
+                console.log(result);
+            } else {
+                console.log('watching for star claimed event is failing');
+            }
+        });
+    }
 
-    // Enable claim button being clicked
     function claimButtonClicked() {
+        const name = document.getElementById('star-name').value;
+        const story = document.getElementById('star-story').value;
+        const ra = document.getElementById('star-ra').value;
+        const dec = document.getElementById('star-dec').value;
+        const mag = document.getElementById('star-mag').value;
+        const cent = document.getElementById('star-cent').value;
+        if (!name || !story || !ra || !dec || !mag || !cent) {
+            document.getElementById('error-message').innerText = "empty fields!";
+            return;
+        }
+        const tokenid = web3.sha3(ra + dec + mag + cent);
+
         web3.eth.getAccounts(function (error, accounts) {
             if (error) {
                 console.log(error);
                 return
             }
             var account = accounts[0];
-            starNotary.claimStar(function (error, result) {
+
+            starNotary.createStar.sendTransaction(name, story, ra, dec, mag, cent, tokenid, {from: account}, function (error, result) {
                 if (!error) {
-                    var starClaimedEvent = starNotary.starClaimed({from: account});
-                    starClaimedEvent.watch(function (error, result) {
-                        if (!error) {
-                            location.reload();
-                        } else {
-                            console.log('watching for star claimed event is failing');
-                        }
-                    });
+                    document.getElementById('error-message').innerText = result;
+                    alert('please remember your starId:' + tokenid);
+                    console.log(result);
                 } else {
-                    console.log(error);
+                    console.log('watching for star claimed event is failing');
                 }
             });
 
